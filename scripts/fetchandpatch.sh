@@ -25,16 +25,6 @@ setphase "FETCH NEWLIB"
 wget $WFLAGS  ftp://sourceware.org/pub/newlib/newlib-${NEWLIB_VER}.tar.gz
 tar -xf newlib-${NEWLIB_VER}.tar.gz
 
-if [ $EXTRAS -eq 1 ]; then
-setphase "FETCH PPL"
-wget $WFLAGS ftp://ftp.cs.unipr.it/pub/ppl/releases/${PPL_VER}/ppl-${PPL_VER}.tar.bz2
-tar -xf ppl-${PPL_VER}.tar.bz2
-
-setphase "FETCH CLooG"
-wget $WFLAGS http://www.bastoul.net/cloog/pages/download/count.php3?url=./cloog-${CLOOG_VER}.tar.gz -O cloog-${CLOOG_VER}.tar.gz
-tar -xf cloog-${CLOOG_VER}.tar.gz
-fi
-
 setphase "FETCH AUTOCONF"
 wget $WFLAGS ftp://ftp.gnu.org/gnu/autoconf/autoconf-${AUTOCONF_VER}.tar.gz -O autoconf-${AUTOCONF_VER}.tar.gz
 tar -xf autoconf-${AUTOCONF_VER}.tar.gz
@@ -53,26 +43,30 @@ tar -xf automake-${AUTOMAKE_VER}.tar.gz
 
 # diff -rupN
 
-
 #doPatch binutils
 setphase "PATCH BINUTILS"
-patch -p1 -d binutils-${BINUTILS_VER} < ../patches/binutils.patch
-cp ../binutils-files/ld/emulparams/os_x86_64.sh binutils-${BINUTILS_VER}/ld/emulparams/${OSNAME}_x86_64.sh
+patch -p1 -d binutils-${BINUTILS_VER} < ../patches/binutils.2.23.patch
+
+if [ "$TARGET" == "$I386_TARGET" ]
+then
+	cp ../arch/${TARGET}/binutils-files/ld/emulparams/os_i386.sh binutils-${BINUTILS_VER}/ld/emulparams/${OSNAME}_i386.sh
+fi
+if [ "$TARGET" == "x86_64-pc-${OSNAME}" ]
+then
+	echo "hi"
+	cp ../arch/${TARGET}/binutils-files/ld/emulparams/os_x86_64.sh binutils-${BINUTILS_VER}/ld/emulparams/${OSNAME}_x86_64.sh
+fi
 
 setphase "PATCH GMP"
 patch -p1 -d gmp-${GMP_VER} < ../patches/gmp.patch || exit
 
 doPatch mpfr
 doPatch mpc
-if [ $EXTRAS -eq 1 ]; then
-doPatch ppl
-doPatch cloog
-fi
 
 doPatch gcc
-cp ../gcc-files/gcc/config/os.h gcc-${GCC_VER}/gcc/config/${OSNAME}.h
+cp ../arch/${TARGET}/gcc-files/gcc/config/os.h gcc-${GCC_VER}/gcc/config/${OSNAME}.h
 
 doPatch newlib
 mkdir -p newlib-${NEWLIB_VER}/newlib/libc/sys/${OSNAME}
-cp -r ../newlib-files/* newlib-${NEWLIB_VER}/newlib/libc/sys/${OSNAME}/.
-cp ../newlib-files/vanilla-syscalls.c newlib-${NEWLIB_VER}/newlib/libc/sys/${OSNAME}/syscalls.c
+cp -r ../arch/${TARGET}/newlib-files/* newlib-${NEWLIB_VER}/newlib/libc/sys/${OSNAME}/.
+cp ../arch/${TARGET}/newlib-files/syscalls.c newlib-${NEWLIB_VER}/newlib/libc/sys/${OSNAME}/syscalls.c

@@ -4,7 +4,7 @@
  	      | -hpux* | -unos* | -osf* | -luna* | -dgux* | -solaris* | -sym* \
  	      | -amigaos* | -amigados* | -msdos* | -newsos* | -unicos* | -aof* \
  	      | -aos* | -aros* \
-+		  | -xomb* \
++	      | -lizarx* \
  	      | -nindy* | -vxsim* | -vxworks* | -ebmon* | -hms* | -mvs* \
  	      | -clix* | -riscos* | -uniplus* | -iris* | -rtu* | -xenix* \
  	      | -hiux* | -386bsd* | -knetbsd* | -mirbsd* | -netbsd* \
@@ -14,7 +14,7 @@
        AC_DEFINE(HAVE_ISNANL)
      fi
      ;;
-+  *-xomb*)
++  *-lizarx*)
 +    AC_CHECK_HEADERS([sys/types.h locale.h float.h])
 +    GLIBCXX_CHECK_BUILTIN_MATH_SUPPORT
 +    GLIBCXX_CHECK_COMPLEX_MATH_SUPPORT
@@ -30,7 +30,7 @@
      *) echo 'Unknown thread configuration for VxWorks'; exit 1 ;;
    esac
    ;;
-+*-*-xomb*)
++*-*-lizarx*)
 +  extra_parts="crtbegin.o crtend.o"
 +  gas=yes
 +  gnu_ld=yes
@@ -40,27 +40,34 @@
  *-*-elf)
    # Assume that newlib is being used and so __cxa_atexit is provided.
    default_use_cxa_atexit=yes
-@@ -1070,5 +1077,10 @@ hppa[12]*-*-hpux11*)
+@@ -1070,5 +1077,15 @@ hppa[12]*-*-hpux11*)
  	use_collect2=yes
  	gas=yes
  	;;
-+x86_64-*-xomb*)
-+	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h i386/i386elf.h i386/x86-64.h  xomb.h"
++i[3-7]86-*-lizarx*)
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h i386/i386elf.h lizarx.h"
++	tmake_file="i386/t-i386elf t-svr4"
++	use_fixproto=yes
++	;;
++x86_64-*-lizarx*)
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h i386/i386elf.h i386/x86-64.h  lizarx.h"
 +	tmake_file="${tmake_file} i386/t-i386elf t-svr4"
 +	use_fixproto=yes
 +	;;
  i[34567]86-*-darwin*)
  	need_64bit_hwint=yes
-
 --- ../../gcc-4.3.3/libgcc/config.host	2008-11-20 12:09:53.000000000 -0500
 +++ libgcc/config.host	2010-04-03 16:35:47.000000000 -0400
-@@ -637,6 +637,9 @@ xscale-*-elf)
+@@ -637,5 +637,12 @@ xscale-*-elf)
  	;;
  xscale-*-coff)
  	;;
-+x86_64-*-xomb*)
-+ extra_parts="crtbegin.o crtend.o"
++i[3-7]86-*-lizarx*)
++	extra_parts="crtbegin.o crtend.o"
++	tmake_file="$tmake_file i386/t-crtstuff"
++	;;
++x86_64-*-lizarx*)
++	extra_parts="crtbegin.o crtend.o"
 +	;;
  xstormy16-*-elf)
  	;;
- xtensa-*-elf*)

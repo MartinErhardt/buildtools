@@ -1,4 +1,6 @@
-
+#function foo ->foo()
+#source -> .
+#
 source scripts/functions.sh
 
 # --- Variables ---
@@ -40,11 +42,14 @@ source ../scripts/fetchandpatch.sh
 setphase "COMPILE BINUTILS"
 cd binutils-obj
 ../binutils-${BINUTILS_VER}/configure --target=$TARGET --prefix=$PREFIX --disable-werror --enable-gold --enable-plugins || exit
+echo "---------------------------------------------------------------hi1-------------------------------------------------------------"
 make -j$NCPU all-gold || exit
+echo "---------------------------------------------------------------hi2-------------------------------------------------------------"
 make -j$NCPU || exit
+echo "---------------------------------------------------------------hi3-------------------------------------------------------------"
 make install || exit
 cd ..
-
+echo "---------------------------------------------------------------hi4-------------------------------------------------------------"
 setphase "COMPILE GMP"
 cd gmp-obj
 ../gmp-${GMP_VER}/configure --prefix=$PREFIX --enable-cxx --disable-shared || exit
@@ -83,7 +88,7 @@ cd ../..
 
 setphase "COMPILE GCC"
 cd gcc-obj
-../gcc-${GCC_VER}/configure --target=$TARGET --prefix=$PREFIX --enable-languages=c,c++ --disable-libssp --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --without-headers --disable-nls --with-newlib || exit
+../gcc-${GCC_VER}/configure --target=$TARGET --prefix=$PREFIX --enable-languages=c,c++ --disable-libssp --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --disable-nls --with-newlib || exit
 make -j$NCPU all-gcc || exit
 make install-gcc || exit
 cd ..
@@ -135,7 +140,7 @@ make install || exit
 cd ..
 
 setphase "PASS-2 COMPILE NEWLIB"
-cp ../newlib-files/syscalls.c newlib-${NEWLIB_VER}/newlib/libc/sys/${OSNAME}/syscalls.c
+cp ../arch/${TARGET}/newlib-files/vanilla-syscalls.c newlib-${NEWLIB_VER}/newlib/libc/sys/${OSNAME}/syscalls.c
 
 cd newlib-obj
 ../newlib-${NEWLIB_VER}/configure --target=$TARGET --prefix=$PREFIX --with-gmp=$PREFIX --with-mpfr=$PREFIX -enable-newlib-hw-fp || exit

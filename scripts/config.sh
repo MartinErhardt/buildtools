@@ -1,6 +1,6 @@
 # EDIT THESE
-OSNAME=xomb
-NCPU=4
+OSNAME=lizarx
+NCPU=grep -c ^processor /proc/cpuinfo
 
 BINUTILS_VER=2.23.1
 GCC_VER=4.7.2
@@ -13,7 +13,8 @@ CLOOG_VER=0.18.0
 
 AUTOCONF_VER=2.68
 AUTOMAKE_VER=1.11.6
-# NO M0AR EDITS PLZ
 
-TARGET=x86_64-pc-${OSNAME}
+export TARGET=i386-pc-${OSNAME}
+export I386_TARGET=i386-pc-${OSNAME}
+export X86_64_TARGET=x86_64-pc-${OSNAME}
 WFLAGS=-c
