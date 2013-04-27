@@ -1,10 +1,10 @@
 #function foo ->foo()
 #source -> .
 #
-source scripts/functions.sh
+. scripts/functions.sh
 
 # --- Variables ---
-source scripts/config.sh
+. scripts/config.sh
 
 PREFIX=`pwd`/local
 

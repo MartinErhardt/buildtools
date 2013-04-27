@@ -1,9 +1,9 @@
 # --- resources ---
-function title {
+title() {
 		echo -en "\033]0;$@\007"
 }
 
-function setphase {
+setphase() {
 		title $1
 		echo ">>>>>>> $1"
 }
@@ -24,12 +24,12 @@ done
 
 # --- patching ---
 
-function toUpper {
+toUpper() {
 		UPPER=`echo $1 | tr '[:lower:]' '[:upper:]'`
 }
 
 
-function doPatch {
+doPatch() {
 		toUpper $1
 		setphase "PATCH $UPPER"
 
