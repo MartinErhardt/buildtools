@@ -34,7 +34,7 @@ mkdir -p automake-obj
 
 
 # --- Fetch and extract each package ---
-source ../scripts/fetchandpatch.sh
+. ../scripts/fetchandpatch.sh
 
 
 # --- Compile all packages ---
@@ -88,7 +88,7 @@ cd ../..
 
 setphase "COMPILE GCC"
 cd gcc-obj
-../gcc-${GCC_VER}/configure --target=$TARGET --prefix=$PREFIX --enable-languages=c,c++ --disable-libssp --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --disable-nls --with-newlib || exit
+../gcc-${GCC_VER}/configure --target=$TARGET --enable-shared --prefix=$PREFIX --enable-languages=c,c++ --disable-libssp --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --disable-nls --with-newlib || exit
 make -j$NCPU all-gcc || exit
 make install-gcc || exit
 cd ..

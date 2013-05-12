@@ -1,7 +1,7 @@
 extern int main(int, char**); //int argc, char **argv, char **environ);
-void uprintf(char* fmt, ...);
-void uprintfstrcol_scr(char font, char* fmt);
-extern void uprintf(char* fmt, ...);
+//void uprintf(char* fmt, ...);
+//void uprintfstrcol_scr(char font, char* fmt);
+//extern void uprintf(char* fmt, ...);
 void _start()
 {
 	int argc=0; 
@@ -19,7 +19,5 @@ int start3(int argc, char** argv){
 		target = ((unsigned long*)argv) + i;
 		*target = *origin;
 	}
-	char stringa[13] ="this is proc2";
-	uprintf(&stringa[0]);
 	return main(argc, argv);
 }
