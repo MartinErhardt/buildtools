@@ -1,7 +1,14 @@
+#ifdef __cplusplus
+extern "C"{
+#endif
 extern int main(int, char**); //int argc, char **argv, char **environ);
 //void uprintf(char* fmt, ...);
 //void uprintfstrcol_scr(char font, char* fmt);
 //extern void uprintf(char* fmt, ...);
+#ifdef __cplusplus
+void _start();
+}
+#endif
 void _start()
 {
 	int argc=0; 

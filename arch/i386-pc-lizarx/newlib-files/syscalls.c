@@ -30,59 +30,64 @@
  */
 
 
-unsigned long long initHeap();
-
-
 // --- Memory ---
 #define PAGE_SIZE 4096ULL
 #define PAGE_MASK 0xFFFFF000ULL
+unsigned long initHeap();
+unsigned long initHeap()
+{
+	unsigned long new_space=0x0;
+	asm volatile( "mov $4096, %edx");
+	asm volatile( "mov $10, %eax");
+	asm volatile ("int $0x30");
+	asm volatile("nop" : "=d" (new_space) );
+	return new_space;
+}
 
 /*
  * sbrk -- changes heap size size. Get nbytes more
  *         RAM. We just increment a pointer in what's
  *         left of memory on the board.
  */
-caddr_t
-sbrk(int nbytes){
-  static unsigned long heap_ptr = 0;
-  caddr_t base;
-
-  int temp;
-
-  if(heap_ptr == 0){
-    heap_ptr = initHeap();
-  }
-
-  base = (caddr_t)heap_ptr;
-
-	if(nbytes < 0){
+caddr_t sbrk(int nbytes)
+{
+	static unsigned long heap_ptr = 0;
+	caddr_t base;
+	int temp;
+	if(heap_ptr == 0)
+	{
+		heap_ptr = initHeap();
+	}
+	base = (caddr_t)heap_ptr;
+	if(nbytes < 0)
+	{
 		heap_ptr -= nbytes;
 		return base;
 	}
-
-  if( (heap_ptr & ~PAGE_MASK) != 0ULL){
-    temp = (PAGE_SIZE - (heap_ptr & ~PAGE_MASK));
-
-    if( nbytes < temp ){
-      heap_ptr += nbytes;
-      nbytes = 0;
-    }else{
-      heap_ptr += temp;
-      nbytes -= temp;
-    }
-  }
-
-  while(nbytes > PAGE_SIZE){
-    nbytes -= (int) PAGE_SIZE;
-    heap_ptr = heap_ptr + PAGE_SIZE;
-  }
-
-  if( nbytes > 0){
-    heap_ptr += nbytes;
-  }
-
-
-  return base;
+	if( (heap_ptr & ~PAGE_MASK) != 0ULL)
+	{
+		temp = (PAGE_SIZE - (heap_ptr & ~PAGE_MASK));
+		if( nbytes < temp )
+		{
+			heap_ptr += nbytes;
+			nbytes = 0;
+		}
+		else
+		{
+			heap_ptr += temp;
+			nbytes -= temp;
+		}
+	}
+	while(nbytes > PAGE_SIZE)
+	{
+		nbytes -= (int) PAGE_SIZE;
+		heap_ptr = heap_ptr + PAGE_SIZE;
+	}
+	if( nbytes > 0)
+	{
+		heap_ptr += nbytes;
+	}
+	return base;
 }
 
 

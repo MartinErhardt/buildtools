@@ -136,70 +136,62 @@ write(int file, char *ptr, int len) {
 extern caddr_t _end;
 
 #define PAGE_SIZE 4096ULL
-#define PAGE_MASK 0xFFFFFFFFFFFFF000ULL
-#define HEAP_ADDR (((unsigned long long)&_end + PAGE_SIZE) & PAGE_MASK)
+#define PAGE_MASK 0xFFFFF000ULL
+unsigned long initHeap();
+unsigned long initHeap()
+{
+	unsigned long new_space=0x0;
+	asm volatile( "mov $4096, %edx");
+	asm volatile( "mov $10, %eax");
+	asm volatile ("int $0x30");
+	asm volatile("nop" : "=d" (new_space) );
+	return new_space;
+}
 
 /*
  * sbrk -- changes heap size size. Get nbytes more
  *         RAM. We just increment a pointer in what's
  *         left of memory on the board.
  */
-caddr_t
-sbrk(int nbytes){
-  static caddr_t heap_ptr = NULL;
-  caddr_t base;
-  
-  int temp;
-
-  if(heap_ptr == NULL){
-    heap_ptr = (caddr_t)HEAP_ADDR;
-  }
-
-  base = heap_ptr;
-
-  if(((unsigned long long)heap_ptr & ~PAGE_MASK) != 0ULL){
-    temp = (PAGE_SIZE - ((unsigned long long)heap_ptr & ~PAGE_MASK));
-
-    if( nbytes < temp ){
-      heap_ptr += nbytes;
-      nbytes = 0;
-    }else{
-      heap_ptr += temp;
-      nbytes -= temp;
-    }
-  }
-
-  while(nbytes > PAGE_SIZE){
-    //allocPage(heap_ptr);
-		
-    nbytes -= (int) PAGE_SIZE;
-    heap_ptr = heap_ptr + PAGE_SIZE;
-  }
-  
-  if( nbytes > 0){
-    //allocPage(heap_ptr);
-
-    heap_ptr += nbytes;
-  }
-
-
-  return base;
-	/*
-  static caddr_t heap_ptr = NULL;
-  caddr_t        base;
-
-  if (heap_ptr == NULL) {
-    heap_ptr = (caddr_t)&_end;
-  }
-
-  if ((RAMSIZE - heap_ptr) >= 0) {
-    base = heap_ptr;
-    heap_ptr += nbytes;
-    return (base);
-  } else {
-    errno = ENOMEM;
-    return ((caddr_t)-1);
-		}*/
+caddr_t sbrk(int nbytes)
+{
+	static unsigned long heap_ptr = 0;
+	caddr_t base;
+	int temp;
+	if(heap_ptr == 0)
+	{
+		heap_ptr = initHeap();
+	}
+	base = (caddr_t)heap_ptr;
+	if(nbytes < 0)
+	{
+		heap_ptr -= nbytes;
+		return base;
+	}
+	if( (heap_ptr & ~PAGE_MASK) != 0ULL)
+	{
+		temp = (PAGE_SIZE - (heap_ptr & ~PAGE_MASK));
+		if( nbytes < temp )
+		{
+			heap_ptr += nbytes;
+			nbytes = 0;
+		}
+		else
+		{
+			heap_ptr += temp;
+			nbytes -= temp;
+		}
+	}
+	while(nbytes > PAGE_SIZE)
+	{
+		nbytes -= (int) PAGE_SIZE;
+		heap_ptr = heap_ptr + PAGE_SIZE;
+	}
+	if( nbytes > 0)
+	{
+		heap_ptr += nbytes;
+	}
+	return base;
 }
 
 
