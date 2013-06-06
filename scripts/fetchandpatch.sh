@@ -53,7 +53,7 @@ then
 fi
 if [ "$TARGET" == "x86_64-pc-${OSNAME}" ]
 then
-	echo "hi"
+	#echo "hi"
 	cp ../arch/${TARGET}/binutils-files/ld/emulparams/os_x86_64.sh binutils-${BINUTILS_VER}/ld/emulparams/${OSNAME}_x86_64.sh
 fi
 

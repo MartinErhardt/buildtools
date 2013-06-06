@@ -6,6 +6,13 @@
 # --- Variables ---
 . scripts/config.sh
 
+F_ARCH_X86_64="--arch-x86_64"
+
+if [ "$1" == $F_ARCH_X86_64 ] || [ "$2" == $F_ARCH_X86_64 ]
+then
+	export TARGET=$X86_64_TARGET
+fi
+
 PREFIX=`pwd`/local
 
 export PATH=$PREFIX/bin:$PATH
@@ -14,7 +21,6 @@ if [ $CLEAN -eq 1 ]; then
 		rm -rf $PREFIX build/*/
 fi
 
-
 # --- Directory creation ---
 
 mkdir -p build
@@ -22,6 +28,15 @@ mkdir -p local
 cd build
 
 setphase "MAKE OBJECT DIRECTORIES"
+rm -rf binutils-obj
+rm -rf gcc-obj
+rm -rf newlib-obj
+rm -rf gmp-obj
+rm -rf mpfr-obj
+rm -rf mpc-obj
+rm -rf autoconf-obj
+rm -rf automake-obj
+#rm -rf $PREFIX
 mkdir -p binutils-obj
 mkdir -p gcc-obj
 mkdir -p newlib-obj
@@ -31,10 +46,10 @@ mkdir -p mpc-obj
 
 mkdir -p autoconf-obj
 mkdir -p automake-obj
-
-
+#mkdir -p $PREFIX
 # --- Fetch and extract each package ---
 . ../scripts/fetchandpatch.sh
+
 
 
 # --- Compile all packages ---
@@ -42,14 +57,10 @@ mkdir -p automake-obj
 setphase "COMPILE BINUTILS"
 cd binutils-obj
 ../binutils-${BINUTILS_VER}/configure --target=$TARGET --prefix=$PREFIX --disable-werror --enable-gold --enable-plugins || exit
-echo "---------------------------------------------------------------hi1-------------------------------------------------------------"
 make -j$NCPU all-gold || exit
-echo "---------------------------------------------------------------hi2-------------------------------------------------------------"
 make -j$NCPU || exit
-echo "---------------------------------------------------------------hi3-------------------------------------------------------------"
 make install || exit
 cd ..
-echo "---------------------------------------------------------------hi4-------------------------------------------------------------"
 setphase "COMPILE GMP"
 cd gmp-obj
 ../gmp-${GMP_VER}/configure --prefix=$PREFIX --enable-cxx --disable-shared || exit
@@ -88,7 +99,7 @@ cd ../..
 
 setphase "COMPILE GCC"
 cd gcc-obj
-../gcc-${GCC_VER}/configure --target=$TARGET --enable-shared --prefix=$PREFIX --enable-languages=c,c++ --disable-libssp --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --disable-nls --with-newlib || exit
+../gcc-${GCC_VER}/configure --target=$TARGET --prefix=$PREFIX --enable-languages=c,c++ --disable-libssp --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --disable-nls --with-newlib --enable-shared|| exit
 make -j$NCPU all-gcc || exit
 make install-gcc || exit
 cd ..
