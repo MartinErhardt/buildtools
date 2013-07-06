@@ -2,3 +2,5 @@ build
 local
 lizarx-local
 *.tar
+i386-pc-lizarx/
+x86_64-pc-lizarx/

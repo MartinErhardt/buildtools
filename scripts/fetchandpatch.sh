@@ -45,7 +45,7 @@ tar -xf automake-${AUTOMAKE_VER}.tar.gz
 
 #doPatch binutils
 setphase "PATCH BINUTILS"
-patch -p1 -d binutils-${BINUTILS_VER} < ../patches/binutils.2.23.patch
+patch -p1 -d binutils-${BINUTILS_VER} < ../patches/binutils.2.23.patch || exit
 
 if [ "$TARGET" == "$I386_TARGET" ]
 then
@@ -65,6 +65,13 @@ doPatch mpc
 
 doPatch gcc
 cp ../arch/${TARGET}/gcc-files/gcc/config/os.h gcc-${GCC_VER}/gcc/config/${OSNAME}.h
+
+if [ "$TARGET" == "x86_64-pc-${OSNAME}" ]
+then
+	echo "hi"
+	cp ../arch/${TARGET}/gcc-files/gcc/config/t-lizarx64 gcc-${GCC_VER}/gcc/config/i386/t-lizarx64
+	cp ../arch/${TARGET}/gcc-files/gcc/config/t-lizarx gcc-${GCC_VER}/gcc/config/i386/t-lizarx
+fi
 
 doPatch newlib
 mkdir -p newlib-${NEWLIB_VER}/newlib/libc/sys/${OSNAME}

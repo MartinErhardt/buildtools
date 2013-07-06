@@ -5,7 +5,12 @@
     builtin_define_std ("unix");      \
     builtin_assert ("system=lizarx");   \
     builtin_assert ("system=unix");   \
+    builtin_define ("__ELF__");     \
+    builtin_define ("__LIZARX__");     \
   } while(0);
+  
+#undef CPP_SPEC
+#define CPP_SPEC ""
 
 #if TARGET_64BIT_DEFAULT
 #define SPEC_32 "m32"
@@ -22,6 +27,7 @@
 #define LINK_SPEC "%{" SPEC_64 ":-m lizarx_x86_64} %{" SPEC_32 ":-m lizarx_i386} \
   %{shared:-shared} \
   %{!shared: \
+    %{rdynamic:-export-dynamic} \
     %{!static: \
       } \
     %{static:-static}}"

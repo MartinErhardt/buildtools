@@ -11,9 +11,10 @@ F_ARCH_X86_64="--arch-x86_64"
 if [ "$1" == $F_ARCH_X86_64 ] || [ "$2" == $F_ARCH_X86_64 ]
 then
 	export TARGET=$X86_64_TARGET
+	GCC_VER=4.6.3
 fi
 
-PREFIX=`pwd`/local
+PREFIX=`pwd`/$TARGET
 
 export PATH=$PREFIX/bin:$PATH
 
@@ -24,7 +25,7 @@ fi
 # --- Directory creation ---
 
 mkdir -p build
-mkdir -p local
+mkdir -p $PREFIX
 cd build
 
 setphase "MAKE OBJECT DIRECTORIES"
@@ -49,8 +50,6 @@ mkdir -p automake-obj
 #mkdir -p $PREFIX
 # --- Fetch and extract each package ---
 . ../scripts/fetchandpatch.sh
-
-
 
 # --- Compile all packages ---
 
@@ -100,7 +99,7 @@ cd ../..
 setphase "COMPILE GCC"
 cd gcc-obj
 ../gcc-${GCC_VER}/configure --target=$TARGET --prefix=$PREFIX --enable-languages=c,c++ --disable-libssp --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --disable-nls --with-newlib --enable-shared|| exit
-make -j$NCPU all-gcc || exit
+make -j3 all-gcc || exit
 make install-gcc || exit
 cd ..
 
@@ -118,7 +117,7 @@ make -j$NCPU all || exit
 make install || exit
 cd ..
 
-cd ../local/share
+cd ../$TARGET/share
 ln -s aclocal-1.11 aclocal
 cd ../../build
 

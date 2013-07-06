@@ -51,14 +51,14 @@
 +	;;
 +x86_64-*-lizarx*)
 +	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h i386/i386elf.h i386/x86-64.h  lizarx.h"
-+	tmake_file="${tmake_file} i386/t-i386elf t-svr4"
++    tmake_file="${tmake_file} i386/t-lizarx64 t-svr4 i386/t-crtstuff i386/t-crtpc i386/t-crtfm t-dfprules"
 +	use_fixproto=yes
 +	;;
  i[34567]86-*-darwin*)
  	need_64bit_hwint=yes
 --- ../../gcc-4.3.3/libgcc/config.host	2008-11-20 12:09:53.000000000 -0500
 +++ libgcc/config.host	2010-04-03 16:35:47.000000000 -0400
-@@ -637,5 +637,13 @@ xscale-*-elf)
+@@ -637,5 +637,11 @@ xscale-*-elf)
  	;;
  xscale-*-coff)
  	;;
@@ -67,8 +67,6 @@
 +	tmake_file="$tmake_file i386/t-crtstuff"
 +	;;
 +x86_64-*-lizarx*)
-+	extra_parts="crtbegin.o crtend.o"
-+	tmake_file="$tmake_file i386/t-crtstuff"
 +	;;
  xstormy16-*-elf)
  	;;

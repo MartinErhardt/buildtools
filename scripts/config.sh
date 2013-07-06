@@ -2,8 +2,8 @@
 OSNAME=lizarx
 NCPU=grep -c ^processor /proc/cpuinfo
 
-BINUTILS_VER=2.23.1
-GCC_VER=4.7.2
+BINUTILS_VER=2.23.2
+GCC_VER=4.8.1
 GMP_VER=5.1.0
 MPFR_VER=3.1.1
 NEWLIB_VER=2.0.0

@@ -13,7 +13,7 @@ int start3(int argc, char** argv){
 	unsigned long long *origin, *target;
 	int i;
 
-	initC2D();
+//	initC2D();
 
 	for(i = 0; i < argc; i++)
 	{
@@ -21,6 +21,5 @@ int start3(int argc, char** argv){
 		target = ((unsigned long long*)argv) + i;
 		*target = *origin;
 	}
-
 	return main(argc, argv);
 }
